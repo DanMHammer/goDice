@@ -38,29 +38,37 @@ Response:
 
 ```json
 {
-  "input": "4d20H3+3d4L1+12-3",
+  "input": "4d20H3+3d4+12-3",
   "valid": true,
   "dice": [
     {
       "size": 20,
       "count": 4,
+      "Operation": "+",
       "high": 3,
-      "rolls": [3, 5, 10, 12],
-      "kept": [5, 10, 12],
-      "subtotal": 27
+      "low": 0,
+      "multiplier": 0,
+      "rolls": [5, 6, 10, 15],
+      "kept": [6, 10, 15],
+      "subtotal": 31
     },
     {
       "size": 4,
       "count": 3,
-      "low": 1,
-      "rolls": [1, 3, 1],
-      "kept": [1],
-      "subtotal": 1
+      "Operation": "+",
+      "high": 0,
+      "low": 0,
+      "multiplier": 0,
+      "rolls": [2, 1, 2],
+      "kept": [2, 1, 2],
+      "subtotal": 5
     }
   ],
-  "modifier": 9,
-  "total": 37,
-  "image": "https://...."
+  "roll_total": 36,
+  "modifiers": [12, -3],
+  "modifier_total": 9,
+  "total": 45,
+  "image": ""
 }
 ```
 
