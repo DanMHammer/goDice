@@ -6,8 +6,10 @@ DONE:
 
 TODO:
 
+- Unit testing
+- Validate Die size (2, 4, 6, 8, 10, 12, 20, 100)
+- Error handling
 - (Maybe) Generate image of roll - Cache JSON in redis and generate on demand when image is requested
-- Unit testing for API
 - Helm deployment for service
 - Github Actions test -> build -> deploy
 - Frontend on danhammer.dev
@@ -26,7 +28,7 @@ L - lowest
 
 x multiply result
 
-GET /roll?string=4d20H3+3d4L1+12-3
+GET /roll/4d20H3+3d4L1+12-3
 
     4 d20: 4 20 sided dice
     H3: keep highest 3 of 4 d20
@@ -73,7 +75,7 @@ Response:
 }
 ```
 
-GET /roll?string=4d21H3
+GET /roll/4d21H3
 
     4 d21: 4 21 sided dice - not possible
 
