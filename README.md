@@ -2,9 +2,10 @@
 
 DONE:
 
+- Simple API for dice rolling based on string input.
+
 TODO:
 
-- Simple API for dice rolling based on string input.
 - (Maybe) Generate image of roll - Cache JSON in redis and generate on demand when image is requested
 - Unit testing for API
 - Helm deployment for service
