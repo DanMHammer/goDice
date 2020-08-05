@@ -71,8 +71,8 @@ GET /roll?string=4d21H3
 Response:
 
 ```json
-    {
-        "input": "4d21H3"
-        "valid": "false"
-    }
+{
+  "input": "4d21H3",
+  "valid": false
+}
 ```
