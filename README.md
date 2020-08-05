@@ -1,4 +1,4 @@
-###goDice - An over-engineered and verbose go microservice for dice rolling
+# goDice - An over-engineered and verbose go microservice for dice rolling
 
 DONE:
 
