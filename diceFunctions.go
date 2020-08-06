@@ -23,7 +23,6 @@ func performCommands(input string) Result {
 	if err != nil {
 		return Result{Valid: false, Errors: err.Error()}
 	}
-	fmt.Println(commands)
 	result := Result{}
 	result.Total = 0
 	dice := []Group{}

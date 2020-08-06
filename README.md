@@ -1,20 +1,31 @@
-# goDice - An over-engineered and verbose go microservice for dice rolling
+# goDice - An over-engineered go microservice for dice rolling
 
-DONE:
+## Done
 
 - Simple API for dice rolling based on string input.
-
-TODO:
-
 - Unit testing
 - Validate Die size (2, 4, 6, 8, 10, 12, 20, 100)
 - Error handling
-- (Maybe) Generate image of roll - Cache JSON in redis and generate on demand when image is requested
+
+## In Progress
+
+- Generate image of roll - Cache JSON in redis and generate SVG on demand when image is requested
+
+## Todo
+
 - Helm deployment for service
 - Github Actions test -> build -> deploy
 - Frontend on danhammer.dev
 
-API:
+## Build and run
+
+docker run -p 6379:6379 redis -d
+go get
+go build .\
+go test -v
+go run .\
+
+## Usage
 
 Dice code reference: https://rolz.org/
 
@@ -28,7 +39,9 @@ L - lowest
 
 x multiply result
 
-GET /roll/4d20H3+3d4L1+12-3
+Use %2B for +
+
+GET /roll/4d20H3%2B3d4L1%2B12-3
 
     4 d20: 4 20 sided dice
     H3: keep highest 3 of 4 d20
@@ -84,6 +97,12 @@ Response:
 ```json
 {
   "input": "4d21H3",
-  "valid": false
+  "valid": true,
+  "dice": null,
+  "roll_total": 0,
+  "modifiers": null,
+  "modifier_total": 0,
+  "total": 0,
+  "error": "Size is not valid. Size: 21 is not a standard dice with 2, 4, 6, 8, 10, 12, 20, or 100 sides"
 }
 ```
