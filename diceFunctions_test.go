@@ -32,7 +32,7 @@ func EqualIntSlices(a, b []int) bool {
 }
 
 func TestParseCommands(t *testing.T) {
-	commands := parseCommands(input)
+	commands, _ := parseCommands(input)
 	expectedCommands := []string{"4d20H3", "+3d4L1", "+12", "-3"}
 	if !EqualStringSlices(commands, expectedCommands) {
 		t.Errorf("Commands parsed incorrectly. Got: %s. Expected %s", commands, expectedCommands)
@@ -57,7 +57,11 @@ func TestRollDice(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		count := rand.Intn(9) + 1
 		size := []int{2, 4, 6, 8, 10, 12, 20, 100}[rand.Intn(8)]
-		rolls := rollDice(count, size, 0)
+		rolls, err := rollDice(count, size, 0)
+
+		if err != nil {
+			t.Errorf(err.Error())
+		}
 
 		if len(rolls) != count {
 			t.Errorf("Number of rolls is incorect got: %d, needed: %d", len(rolls), count)
@@ -73,62 +77,77 @@ func TestRollDice(t *testing.T) {
 }
 
 type RollSpecificDiceData struct {
-	count int
-	size  int
-	rolls []int
+	count     int
+	size      int
+	rolls     []int
+	shouldErr bool
 }
 
 func TestRollSpecificDice(t *testing.T) {
 	items := []RollSpecificDiceData{
-		{4, 20, []int{6, 15, 10, 5}},
-		{4, 8, []int{7, 3, 2, 1}},
-		{3, 10, []int{6, 7, 3}},
-		{1, 2, []int{1}},
+		{4, 20, []int{6, 15, 10, 5}, false},
+		{4, 8, []int{7, 3, 2, 1}, false},
+		{3, 10, []int{6, 7, 3}, false},
+		{1, 2, []int{1}, false},
+		{3, 11, []int{}, true},
 	}
 
 	for _, item := range items {
-		rolls := rollDice(item.count, item.size, 1)
-		if !EqualIntSlices(rolls, item.rolls) {
-			t.Errorf("Rolls incorrect. Got: %d. Expected %d.", rolls, item.rolls)
+		rolls, err := rollDice(item.count, item.size, 1)
+
+		if !item.shouldErr && err != nil {
+			t.Errorf(err.Error())
+		} else if !item.shouldErr && err == nil {
+
+			if !EqualIntSlices(rolls, item.rolls) {
+				t.Errorf("Rolls incorrect. Got: %d. Expected %d.", rolls, item.rolls)
+			}
 		}
 	}
 
 }
 
 type HighLowData struct {
-	command string
-	rolls   []int
-	highInt int
-	lowInt  int
-	sum     int
-	kept    []int
+	command   string
+	rolls     []int
+	highInt   int
+	lowInt    int
+	sum       int
+	kept      []int
+	shouldErr bool
 }
 
 func TestHighLow(t *testing.T) {
 	items := []HighLowData{
-		{"4d10H2", []int{1, 2, 3, 4}, 2, 0, 7, []int{3, 4}},
-		{"4d10H2L1", []int{6, 2, 10, 4}, 2, 1, 18, []int{6, 10, 2}},
-		{"2d10H1L2", []int{1, 2, 3, 4}, 1, 2, 7, []int{4, 1, 2}},
-		{"3d8", []int{8, 7, 3, 5}, 0, 0, 23, []int{8, 7, 3, 5}},
+		{"4d10H2", []int{1, 2, 3, 4}, 2, 0, 7, []int{3, 4}, false},
+		{"4d10H2L1", []int{6, 2, 10, 4}, 2, 1, 18, []int{6, 10, 2}, false},
+		{"6d10H1L2", []int{1, 2, 3, 4}, 1, 2, 7, []int{4, 1, 2}, false},
+		{"3d8", []int{8, 7, 3, 5}, 0, 0, 23, []int{8, 7, 3, 5}, false},
+		{"2d10HL3", []int{1, 2}, 0, 0, 0, []int{}, true},
+		{"2d10H2L2", []int{1, 2}, 0, 0, 0, []int{}, true},
 	}
 
 	for _, item := range items {
-		highInt, lowInt, kept, sum := highLow(item.command, item.rolls)
+		highInt, lowInt, kept, sum, err := highLow(item.command, item.rolls)
 
-		if highInt != item.highInt {
-			t.Errorf("highInt incorrect. Got: %d. Expected %d.", highInt, item.highInt)
-		}
+		if !item.shouldErr && err != nil {
+			t.Errorf(err.Error())
+		} else if !item.shouldErr && err == nil {
+			if highInt != item.highInt {
+				t.Errorf("highInt incorrect. Got: %d. Expected %d.", highInt, item.highInt)
+			}
 
-		if lowInt != item.lowInt {
-			t.Errorf("lowInt incorrect. Got: %d. Expected %d.", lowInt, item.lowInt)
-		}
+			if lowInt != item.lowInt {
+				t.Errorf("lowInt incorrect. Got: %d. Expected %d.", lowInt, item.lowInt)
+			}
 
-		if sum != item.sum {
-			t.Errorf("sum incorrect. Got: %d. Expected %d.", sum, item.sum)
-		}
+			if sum != item.sum {
+				t.Errorf("sum incorrect. Got: %d. Expected %d.", sum, item.sum)
+			}
 
-		if !EqualIntSlices(kept, item.kept) {
-			t.Errorf("kept incorrect. Got: %d. Expected %d.", kept, item.kept)
+			if !EqualIntSlices(kept, item.kept) {
+				t.Errorf("kept incorrect. Got: %d. Expected %d.", kept, item.kept)
+			}
 		}
 	}
 }

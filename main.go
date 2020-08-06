@@ -21,6 +21,7 @@ type Result struct {
 	ModifierTotal int     `json:"modifier_total"`
 	Total         int     `json:"total"`
 	Image         string  `json:"image"`
+	Errors        string  `json:"error"`
 }
 
 //Group ...

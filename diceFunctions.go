@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 var modifierReg = regexp.MustCompile(`(?:[+-])(\d*)`)
@@ -14,10 +15,14 @@ var countReg = regexp.MustCompile(`([+-]?)(\d*)`)
 var sizeReg = regexp.MustCompile(`(?:[dD])(\d*)`)
 var highReg = regexp.MustCompile(`(?:[hH])(\d*)`)
 var lowReg = regexp.MustCompile(`(?:[lL])(\d*)`)
+var allowedSizes = []int{2, 4, 6, 8, 10, 12, 20, 100}
 
 func performCommands(input string) Result {
 
-	commands := parseCommands(input)
+	commands, err := parseCommands(input)
+	if err != nil {
+		return Result{Valid: false, Errors: err.Error()}
+	}
 	fmt.Println(commands)
 	result := Result{}
 	result.Total = 0
@@ -25,7 +30,13 @@ func performCommands(input string) Result {
 
 	for i := 0; i < len(commands); i++ {
 		command := commands[i]
-		group, isDie := makeGroup(command)
+		group, isDie, err := makeGroup(command)
+		if err != nil {
+			result.Errors = err.Error()
+			result.Valid = false
+			return result
+		}
+
 		if isDie {
 			dice = append(dice, group)
 			result.RollTotal = result.RollTotal + group.Subtotal
@@ -40,11 +51,26 @@ func performCommands(input string) Result {
 	return result
 }
 
-func parseCommands(input string) []string {
-	return commandReg.FindAllString(input, -1)
+func parseCommands(input string) ([]string, error) {
+	commands := commandReg.FindAllString(input, -1)
+	commandsJoined := strings.Join(commands, "")
+
+	if commandsJoined != input {
+		return commands, fmt.Errorf("Commands did not parse correctly. Input: %s. Parsed Commands: %s", input, commands)
+	}
+	return commands, nil
 }
 
-func makeGroup(command string) (Group, bool) {
+func contains(arr []int, integer int) bool {
+	for _, a := range arr {
+		if a == integer {
+			return true
+		}
+	}
+	return false
+}
+
+func makeGroup(command string) (Group, bool, error) {
 
 	group := Group{}
 
@@ -52,15 +78,28 @@ func makeGroup(command string) (Group, bool) {
 
 	if len(size) > 1 {
 		sizeInt, _ := strconv.Atoi(size[1])
+
+		if !contains(allowedSizes, sizeInt) {
+			return group, true, fmt.Errorf("Size is not valid. Size: %d is not a standard dice with 2, 4, 6, 8, 10, 12, 20, or 100 sides", sizeInt)
+		}
 		group.Size = sizeInt
 
 		group.Count = countInt
 		group.Operation = operation
 
-		rolls := rollDice(countInt, sizeInt, 0)
+		rolls, err := rollDice(countInt, sizeInt, 0)
+
+		if err != nil {
+			return group, true, err
+		}
+
 		group.Rolls = rolls
 
-		highInt, lowInt, kept, sum := highLow(command, rolls)
+		highInt, lowInt, kept, sum, err := highLow(command, rolls)
+
+		if err != nil {
+			return group, true, err
+		}
 
 		group.Kept = kept
 		group.High = highInt
@@ -72,7 +111,7 @@ func makeGroup(command string) (Group, bool) {
 			group.Subtotal = sum
 		}
 
-		return group, true
+		return group, true, nil
 
 	}
 
@@ -81,7 +120,7 @@ func makeGroup(command string) (Group, bool) {
 	if group.Operation == "-" {
 		modifierInt = 0 - modifierInt
 	}
-	return Group{Subtotal: modifierInt}, false
+	return Group{Subtotal: modifierInt}, false, nil
 
 }
 
@@ -105,53 +144,66 @@ func parseCountSizeOp(command string) (int, []string, string) {
 	return countInt, size, operation
 }
 
-func rollDice(countInt int, sizeInt int, override_seed int64) []int {
+func rollDice(countInt int, sizeInt int, overrideSeed int64) ([]int, error) {
 
-	if override_seed != 0 {
-		rand.Seed(override_seed)
+	if overrideSeed != 0 {
+		rand.Seed(overrideSeed)
 	}
 	rolls := []int{}
+
+	if !contains(allowedSizes, sizeInt) {
+		return rolls, fmt.Errorf("Size is not valid. Size: %d is not a standard dice with 2, 4, 6, 8, 10, 12, 20, or 100 sides", sizeInt)
+	}
 
 	for j := 0; j < countInt; j++ {
 		rolls = append(rolls, rand.Intn(sizeInt-1)+1)
 	}
 
-	return rolls
+	return rolls, nil
 }
 
-func highLow(command string, rolls []int) (int, int, []int, int) {
+func highLow(command string, rolls []int) (int, int, []int, int, error) {
 	high := highReg.FindStringSubmatch(command)
 	low := lowReg.FindStringSubmatch(command)
 
 	length := len(rolls)
 	kept := []int{}
+	unkept := []int{}
 	highInt := 0
 	lowInt := 0
+	sum := 0
 
 	if len(high) > 0 {
 		highInt, _ = strconv.Atoi(high[1])
 		if highInt > 0 {
+			if highInt > length {
+				return highInt, 0, kept, sum, fmt.Errorf("Too many high dice requested. %d dice rolled. %d high dice requested", length, highInt)
+			}
 			sort.Ints(rolls)
 			kept = append(kept, rolls[length-highInt:length]...)
+			unkept = append(unkept, rolls[0:length-highInt]...)
 		}
 	}
 	if len(low) > 0 {
 		lowInt, _ = strconv.Atoi(low[1])
 
 		if lowInt > 0 {
+			if lowInt > length {
+				return highInt, lowInt, kept, sum, fmt.Errorf("Too many low dice requested. %d dice rolled. %d low dice requested", length, lowInt)
+			} else if lowInt+highInt > length {
+				return highInt, lowInt, kept, sum, fmt.Errorf("Too many dice requested. %d dice rolled. %d low dice and %d high dice requested", length, lowInt, highInt)
+			}
 			sort.Ints(rolls)
-			kept = append(kept, rolls[0:lowInt]...)
+			kept = append(kept, unkept[0:lowInt]...)
 		}
 	}
 	if len(low) <= 0 && len(high) <= 0 {
 		kept = rolls
 	}
 
-	sum := 0
-
 	for _, i := range kept {
 		sum += i
 	}
 
-	return highInt, lowInt, kept, sum
+	return highInt, lowInt, kept, sum, nil
 }
