@@ -34,6 +34,7 @@ type Group struct {
 	Multiplier int    `json:"multiplier"`
 	Rolls      []int  `json:"rolls"`
 	Kept       []int  `json:"kept"`
+	Unkept     []int  `json:"unkept"`
 	Subtotal   int    `json:"subtotal"`
 }
 
@@ -45,6 +46,7 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/roll/{input}", roll)
 	router.HandleFunc("/image/{id}", image)
+	router.HandleFunc("/rollImage/{input}", rollImage)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
@@ -67,5 +69,13 @@ func image(w http.ResponseWriter, r *http.Request) {
 	resultJSON := getJSON(id)
 	result := Result{}
 	json.Unmarshal([]byte(resultJSON), &result)
+	generate(w, result)
+	// json.NewEncoder(w).Encode(result)
+}
+
+func rollImage(w http.ResponseWriter, r *http.Request) {
+	input := mux.Vars(r)["input"]
+	result := performCommands(input)
+	result.Input = input
 	generate(w, result)
 }

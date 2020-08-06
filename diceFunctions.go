@@ -94,7 +94,7 @@ func makeGroup(command string) (Group, bool, error) {
 
 		group.Rolls = rolls
 
-		highInt, lowInt, kept, sum, err := highLow(command, rolls)
+		highInt, lowInt, kept, sum, unkept, err := highLow(command, rolls)
 
 		if err != nil {
 			return group, true, err
@@ -103,6 +103,7 @@ func makeGroup(command string) (Group, bool, error) {
 		group.Kept = kept
 		group.High = highInt
 		group.Low = lowInt
+		group.Unkept = unkept
 
 		if operation == "-" {
 			group.Subtotal = 0 - sum
@@ -115,10 +116,8 @@ func makeGroup(command string) (Group, bool, error) {
 	}
 
 	modifier := modifierReg.FindStringSubmatch(command)
-	modifierInt, _ := strconv.Atoi(modifier[1])
-	if group.Operation == "-" {
-		modifierInt = 0 - modifierInt
-	}
+	modifierInt, _ := strconv.Atoi(modifier[0])
+
 	return Group{Subtotal: modifierInt}, false, nil
 
 }
@@ -161,7 +160,7 @@ func rollDice(countInt int, sizeInt int, overrideSeed int64) ([]int, error) {
 	return rolls, nil
 }
 
-func highLow(command string, rolls []int) (int, int, []int, int, error) {
+func highLow(command string, rolls []int) (int, int, []int, int, []int, error) {
 	high := highReg.FindStringSubmatch(command)
 	low := lowReg.FindStringSubmatch(command)
 
@@ -176,11 +175,11 @@ func highLow(command string, rolls []int) (int, int, []int, int, error) {
 		highInt, _ = strconv.Atoi(high[1])
 		if highInt > 0 {
 			if highInt > length {
-				return highInt, 0, kept, sum, fmt.Errorf("Too many high dice requested. %d dice rolled. %d high dice requested", length, highInt)
+				return highInt, 0, kept, sum, unkept, fmt.Errorf("Too many high dice requested. %d dice rolled. %d high dice requested", length, highInt)
 			}
 			sort.Ints(rolls)
 			kept = append(kept, rolls[length-highInt:length]...)
-			unkept = append(unkept, rolls[0:length-highInt]...)
+			unkept = rolls[0 : length-highInt]
 		}
 	}
 	if len(low) > 0 {
@@ -188,12 +187,30 @@ func highLow(command string, rolls []int) (int, int, []int, int, error) {
 
 		if lowInt > 0 {
 			if lowInt > length {
-				return highInt, lowInt, kept, sum, fmt.Errorf("Too many low dice requested. %d dice rolled. %d low dice requested", length, lowInt)
+				return highInt, lowInt, kept, sum, unkept, fmt.Errorf("Too many low dice requested. %d dice rolled. %d low dice requested", length, lowInt)
 			} else if lowInt+highInt > length {
-				return highInt, lowInt, kept, sum, fmt.Errorf("Too many dice requested. %d dice rolled. %d low dice and %d high dice requested", length, lowInt, highInt)
+				return highInt, lowInt, kept, sum, unkept, fmt.Errorf("Too many dice requested. %d dice rolled. %d low dice and %d high dice requested", length, lowInt, highInt)
 			}
-			sort.Ints(rolls)
-			kept = append(kept, unkept[0:lowInt]...)
+			sort.Ints(unkept)
+			kept = append(kept, unkept[0:lowInt-1]...)
+			unkept = kept
+
+			for i, keep := range kept {
+				for _, roll := range rolls {
+					if roll == keep {
+						unkept[i] = -1
+					}
+				}
+			}
+
+			unkeptFinal := unkept
+			for _, unkeptRoll := range unkept {
+				if unkeptRoll != -1 {
+					unkeptFinal = append(unkeptFinal, unkeptRoll)
+				}
+			}
+
+			unkept = unkeptFinal
 		}
 	}
 	if len(low) <= 0 && len(high) <= 0 {
@@ -204,5 +221,5 @@ func highLow(command string, rolls []int) (int, int, []int, int, error) {
 		sum += i
 	}
 
-	return highInt, lowInt, kept, sum, nil
+	return highInt, lowInt, kept, sum, unkept, nil
 }

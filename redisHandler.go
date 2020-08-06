@@ -19,7 +19,7 @@ func saveJSON(id string, result Result) {
 
 	jsonResult, _ := json.Marshal(result)
 
-	err := rdb.Set(ctx, id, jsonResult, 15*time.Minute).Err()
+	err := rdb.Set(ctx, id, jsonResult, 30*time.Minute).Err()
 	if err != nil {
 		panic(err)
 	}
