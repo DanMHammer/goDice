@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dice-dep
+  namespace: dice-ns
+  labels:
+    app: app
+spec:
+  selector:
+    matchLabels:
+      app: app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: dice-node
+          image: dhammer25/godice:latest
+          ports:
+            - containerPort: 3000
+      imagePullSecrets:
+        - name: regcred

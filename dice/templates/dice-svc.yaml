@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dice-svc
+  namespace: dice-ns
+  labels:
+    app: app
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      nodePort: {{ .Values.nodePort }}
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: app

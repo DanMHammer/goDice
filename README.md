@@ -6,16 +6,16 @@
 - Unit testing
 - Validate Die size (2, 4, 6, 8, 10, 12, 20, 100)
 - Error handling
+- Generate image of roll - Cache JSON in redis and generate SVG on demand when image is requested
+- Helm deployment
 
 ## In Progress
 
-- Generate image of roll - Cache JSON in redis and generate SVG on demand when image is requested
-
 ## Todo
 
-- Helm deployment for service
 - Github Actions test -> build -> deploy
 - Frontend on danhammer.dev
+- Add redis option to helm deployment
 
 ## Build and run
 
@@ -24,6 +24,15 @@ go get
 go build .\
 go test -v
 go run .\
+
+## Helm Deployment
+
+Edit values.yaml to set nodePort.
+
+```
+cd dice
+helm install . --values values.yaml
+```
 
 ## Usage
 
