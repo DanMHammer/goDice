@@ -55,7 +55,7 @@ func main() {
 	router.HandleFunc("/roll/{input}", roll)
 	router.HandleFunc("/image/{id}", image)
 	router.HandleFunc("/rollImage/{input}", rollImage)
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
 //4d20H3+3d4L1+12-3

@@ -14,5 +14,5 @@ RUN CGO_ENABLED=0 GOOS=linux GARCH=amd64 go build
 FROM alpine
 WORKDIR /root
 COPY --from=builder /build/app/dice .
-EXPOSE 8080
+EXPOSE 3000
 ENTRYPOINT ["./dice"]
