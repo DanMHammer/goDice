@@ -13,6 +13,9 @@ jobs:
     - name: Checkout master
       uses: actions/checkout@v2
 
+    - name: Update SHA
+      run: echo $GITHUB_SHA > $GITHUB_WORKSPACE/site/_meta
+
     - name: Login to DockerHub
       uses: crazy-max/ghaction-docker-login@v1
       with:
@@ -20,10 +23,13 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: Build Docker image
-      run: docker build . -t ${{ secrets.DOCKERHUB_USERNAME }}/godice:latest
+      run: docker build . -t ${{ secrets.DOCKERHUB_USERNAME }}/godice:$(echo $GITHUB_SHA | head -c7)
     
     - name: Push image to DockerHub
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/godice:latest
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/godice:$(echo $GITHUB_SHA | head -c7)
+
+    - name: Update deployment file
+      run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{secrets.DOCKERHUB_USERNAME}}/godice:'${TAG}'|' $GITHUB_WORKSPACE/dice/templates/dice-dep.yaml
 
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
