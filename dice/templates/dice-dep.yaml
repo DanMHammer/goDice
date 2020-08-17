@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: dice-node
-          image: dhammer25/godice:latest
+          image: <IMAGE>
           ports:
             - containerPort: 3000
       imagePullSecrets:
