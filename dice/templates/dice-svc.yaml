@@ -6,10 +6,8 @@ metadata:
   labels:
     app: app
 spec:
-  type: NodePort
   ports:
     - name: http
-      nodePort: {{ .Values.nodePort }}
       port: 3000
       targetPort: 3000
   selector:

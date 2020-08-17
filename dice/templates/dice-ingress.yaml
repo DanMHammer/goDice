@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: dice-ingress
+spec:
+  rules:
+  - host: k8s.{{.Values.domain}}
+    http:
+      paths: /dice
+      - backend:
+          serviceName: dice-svc
+          servicePort: 3000
