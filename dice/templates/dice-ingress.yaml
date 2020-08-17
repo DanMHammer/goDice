@@ -5,7 +5,14 @@ metadata:
   # annotations:
   #   nginx.ingress.kubernetes.io/rewrite-target: /
   namespace: dice-ns
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
 spec:
+  tls:
+  - hosts:
+    - k8s.{{.Values.domain}}
+    secretName: dice-tls
   rules:
   - host: k8s.{{.Values.domain}}
     http:
