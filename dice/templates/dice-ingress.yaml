@@ -15,8 +15,8 @@ spec:
   - host: k8s.{{.Values.domain}}
     http:
       paths: 
-      - path: /dice
-        pathType: Prefix
+      - path: /
+        # pathType: Prefix
         backend:
           serviceName: dice-svc
           servicePort: 3000
