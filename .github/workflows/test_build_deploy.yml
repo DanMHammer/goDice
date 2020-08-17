@@ -20,7 +20,7 @@ jobs:
     - name: Checkout master
       uses: actions/checkout@v2
     - name: Test
-      run: go test ./...
+      run: go test ./app/...
   build:
     name: Build and Deploy
     runs-on: ubuntu-latest
