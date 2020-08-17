@@ -6,8 +6,11 @@ WORKDIR /build/app
 COPY app/go.mod ./
 RUN go mod download
 
-# Build
+# Test
 COPY app/. ./
+RUN go test ./..
+
+# Build
 RUN CGO_ENABLED=0 GOOS=linux GARCH=amd64 go build
 
 # Create final image
