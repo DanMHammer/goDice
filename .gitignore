@@ -8,6 +8,3 @@
 # Testing
 *.test
 *.tmp
-
-# Secret Templates
-./dice/templates/dice-staging-issuer.yaml
