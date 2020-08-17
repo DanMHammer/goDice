@@ -15,7 +15,7 @@ spec:
   - host: {{.Values.domain}}
     http:
       paths: 
-      - path: /
+      - path: /dice
         # pathType: Prefix
         backend:
           serviceName: dice-svc
