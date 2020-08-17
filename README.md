@@ -1,5 +1,7 @@
 # goDice - An over-engineered go microservice for dice rolling
 
+See it in Action: https://k8s.danhammer.dev/rollImage/-3d2H2%2B5d4H1%2B4d6H3%2B3d8%2B2d10H1%2B3d12-2d20
+
 ## Done
 
 - Simple API for dice rolling based on string input.
