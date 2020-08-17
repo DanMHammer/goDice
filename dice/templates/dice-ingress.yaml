@@ -2,9 +2,9 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: dice-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-
+  # annotations:
+  #   nginx.ingress.kubernetes.io/rewrite-target: /
+  namespace: dice-ns
 spec:
   rules:
   - host: k8s.{{.Values.domain}}
