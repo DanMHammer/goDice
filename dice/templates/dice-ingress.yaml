@@ -8,7 +8,7 @@ spec:
     http:
       paths: 
       - path: /dice
-        pathType: prefix
+        pathType: Prefix
         backend:
           serviceName: dice-svc
           servicePort: 3000
