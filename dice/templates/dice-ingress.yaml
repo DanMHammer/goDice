@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - k8s.{{.Values.domain}}
+    - {{.Values.domain}}
     secretName: dice-tls
   rules:
-  - host: k8s.{{.Values.domain}}
+  - host: {{.Values.domain}}
     http:
       paths: 
       - path: /
