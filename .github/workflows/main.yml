@@ -22,17 +22,11 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Update SHA
-      run: echo $GITHUB_SHA > $GITHUB_WORKSPACE/site/_meta
-
     - name: Build Docker image
-      run: docker build . -t ${{ secrets.DOCKERHUB_USERNAME }}/godice:$(echo $GITHUB_SHA | head -c7)
+      run: docker build . -t ${{ secrets.DOCKERHUB_USERNAME }}/godice:latest
     
     - name: Push image to DockerHub
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/godice:$(echo $GITHUB_SHA | head -c7)
-
-    - name: Update deployment file
-      run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|'${secrets.DOCKERHUB_USERNAME}'/godice:'${TAG}'|' $GITHUB_WORKSPACE/dice/templates/dice-dep.yaml
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/godice:latest
 
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
@@ -47,3 +41,4 @@ jobs:
 
     - name: Verify deployment
       run: helm status dice
+
