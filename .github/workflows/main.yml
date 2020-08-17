@@ -37,7 +37,7 @@ jobs:
       run: doctl kubernetes cluster kubeconfig save ${{ secrets.DO_K8S_CLUSTER }}
 
     - name: Deploy to DigitalOcean Kubernetes
-      run: helm install -f $GITHUB_WORKSPACE/dice/values.yaml dice $GITHUB_WORKSPACE/dice --replace
+      run: helm upgrade -f $GITHUB_WORKSPACE/dice/values.yaml dice $GITHUB_WORKSPACE/dice
 
     - name: Verify deployment
       run: helm status dice
