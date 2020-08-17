@@ -1,0 +1,25 @@
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  build:
+    name: Deploy to Digital Ocean K8s
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Save DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig save ${{ secrets.DO_K8S_CLUSTER }}
+
+    - name: Deploy to DigitalOcean Kubernetes
+      run: helm upgrade -f $GITHUB_WORKSPACE/dice/values.yaml dice $GITHUB_WORKSPACE/dice
+
+    - name: Verify deployment
+      run: helm status dice
