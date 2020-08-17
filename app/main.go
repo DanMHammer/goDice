@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
@@ -55,7 +56,13 @@ func main() {
 	router.HandleFunc("/roll/{input}", roll)
 	router.HandleFunc("/image/{id}", image)
 	router.HandleFunc("/rollImage/{input}", rollImage)
+	router.PathPrefix("/").HandlerFunc(defaultHandler)
 	log.Fatal(http.ListenAndServe(":3000", router))
+}
+
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Print(w, "Hello!")
 }
 
 //4d20H3+3d4L1+12-3
