@@ -8,30 +8,24 @@
 - Error handling
 - Generate image of roll - Cache JSON in redis and generate SVG on demand when image is requested
 - Helm deployment
+- Github Actions build -> deploy
 
 ## In Progress
 
 ## Todo
 
-- Github Actions test -> build -> deploy
+- Github Actions test
 - Frontend on danhammer.dev
 - Add redis option to helm deployment
 
 ## Build and run
 
+```
 docker run -p 6379:6379 redis -d
 go get
 go build .\
 go test -v
 go run .\
-
-## Helm Deployment
-
-Edit values.yaml to set nodePort.
-
-```
-cd dice
-helm install . --values values.yaml
 ```
 
 ## Usage

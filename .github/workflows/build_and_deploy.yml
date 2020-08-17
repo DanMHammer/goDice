@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build and Push image to Docker
+    name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
 
