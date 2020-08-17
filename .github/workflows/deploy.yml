@@ -2,7 +2,8 @@ on:
   push:
     branches:
       - master
-
+    paths-ignore:
+    - 'app/**'
 jobs:
 
   build:
