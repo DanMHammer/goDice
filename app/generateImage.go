@@ -25,7 +25,7 @@ func generate(w http.ResponseWriter, result Result) {
 	s := svg.New(w)
 
 	canvasx := maxLength(result.Dice)*100 + 50
-	canvasy := len(result.Dice)*125 + len(result.Modifiers)*100
+	canvasy := len(result.Dice)*100 + len(result.Modifiers)*100 + 200
 
 	s.Start(canvasx, canvasy)
 	x := 60
