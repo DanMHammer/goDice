@@ -2,12 +2,11 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: dice-ingress
-  # annotations:
-  #   nginx.ingress.kubernetes.io/rewrite-target: /
   namespace: dice-ns
   annotations:
     kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   tls:
   - hosts:
@@ -17,7 +16,7 @@ spec:
   - host: k8s.{{.Values.domain}}
     http:
       paths: 
-      - path: /dice
+      - path: /dice(/$)(.*)
         pathType: Prefix
         backend:
           serviceName: dice-svc
