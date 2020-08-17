@@ -10,6 +10,8 @@ jobs:
     name: Deploy to Digital Ocean K8s
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout master
+      uses: actions/checkout@master
 
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
