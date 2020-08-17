@@ -90,7 +90,6 @@ func TestRollSpecificDice(t *testing.T) {
 		{3, 10, []int{6, 7, 3}, false},
 		{1, 2, []int{1}, false},
 		{3, 11, []int{}, true},
-		{5, 13, []int{}, true},
 	}
 
 	for _, item := range items {
