@@ -53,10 +53,10 @@ func main() {
 	Cache, _ = SetupCache()
 
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/roll/{input}", roll)
-	router.HandleFunc("/image/{id}", image)
-	router.HandleFunc("/rollImage/{input}", rollImage)
-	router.PathPrefix("/").HandlerFunc(defaultHandler)
+	router.HandleFunc("/dice/roll/{input}", roll)
+	router.HandleFunc("/dice/image/{id}", image)
+	router.HandleFunc("/dice/rollImage/{input}", rollImage)
+	router.PathPrefix("/dice").HandlerFunc(defaultHandler)
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
@@ -74,7 +74,7 @@ func roll(w http.ResponseWriter, r *http.Request) {
 	result.Input = input
 
 	id, _ := shortid.Generate()
-	result.Image = "localhost:8080/image/" + id
+	result.Image = "k8s.danhammer.dev/dice/image/" + id
 
 	Cache.SaveResult(id, result)
 	json.NewEncoder(w).Encode(result)
