@@ -154,7 +154,7 @@ func rollDice(countInt int, sizeInt int, overrideSeed int64) ([]int, error) {
 	}
 
 	for j := 0; j < countInt; j++ {
-		rolls = append(rolls, rand.Intn(sizeInt-1)+1)
+		rolls = append(rolls, rand.Intn(sizeInt)+1)
 	}
 
 	return rolls, nil
