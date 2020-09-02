@@ -8,7 +8,7 @@ RUN go mod download
 
 # Test
 COPY app/. ./
-# RUN CGO_ENABLED=0 GOOS=linux GARCH=amd64 go test ./app/..
+RUN CGO_ENABLED=0 GOOS=linux GARCH=amd64 go test ./app/..
 
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GARCH=amd64 go build

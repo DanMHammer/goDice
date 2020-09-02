@@ -80,23 +80,34 @@ type RollSpecificDiceData struct {
 	count     int
 	size      int
 	rolls     []int
+    seed      int64
 	shouldErr bool
 }
 
 func TestRollSpecificDice(t *testing.T) {
 	items := []RollSpecificDiceData{
-		{4, 20, []int{6, 15, 10, 5}, false},
-		{4, 8, []int{7, 3, 2, 1}, false},
-		{3, 10, []int{6, 7, 3}, false},
-		{1, 2, []int{1}, false},
-		{3, 11, []int{}, true},
-		{2, 13, []int{}, true},
+		{4, 20, []int{2, 8, 8, 20}, 1, false},
+		{4,  2, []int{1, 1, 1, 1}, 2, false},
+		{3, 10, []int{9, 8, 7}, 3, false},
+		{1, 2, []int{2}, 4, false},
+		{3, 11, []int{}, 5, true},
+		{2, 13, []int{}, 6, true},
+		{5, 12, []int{}, 0, false},
 	}
 
 	for _, item := range items {
-		rolls, err := rollDice(item.count, item.size, 1)
+		rolls, err := rollDice(item.count, item.size, item.seed)
 
-		if !item.shouldErr && err != nil {
+		if item.seed == 0 {
+			if len(rolls) != item.count{
+				t.Errorf("Incorrect number of rolls. Got: %d. Expected %d.", len(rolls), item.count)
+			}
+			for _, roll := range rolls {
+				if roll > item.size || roll <= 0 {
+					t.Errorf("Roll out of bounds. Got: %d. Expected 0 < x < %d.", roll, item.size)
+				}
+			}
+		} else if !item.shouldErr && err != nil {
 			t.Errorf(err.Error())
 		} else if !item.shouldErr && err == nil {
 
