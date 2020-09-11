@@ -73,7 +73,7 @@ func roll(w http.ResponseWriter, r *http.Request) {
 	result.Input = input
 
 	id, _ := shortid.Generate()
-	result.Image = "http://k8s.danhammer.dev/image/" + id
+	result.Image = "https://k8s.danhammer.dev/image/" + id
 
 	Cache.SaveResult(id, result)
 	json.NewEncoder(w).Encode(result)
