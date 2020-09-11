@@ -24,8 +24,8 @@ func generate(w http.ResponseWriter, result Result) {
 	w.Header().Set("Content-Type", "image/svg+xml")
 	s := svg.New(w)
 
-	canvasx := maxLength(result.Dice)*100 + 200
-	canvasy := len(result.Dice)*100 + len(result.Modifiers)*100 + 250
+	canvasx := maxLength(result.Dice)*75 + 100
+	canvasy := len(result.Dice)*100 + len(result.Modifiers)*100 + 50
 
 	s.Start(canvasx, canvasy)
 	x := 60

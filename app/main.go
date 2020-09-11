@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/teris-io/shortid"
+	"github.com/rs/cors"
 )
 
 var cacheEngineFlag = flag.String("engine", "gocache", "Storage engine to use for hashes and messages.  Supported: redis, gocache. Default: gocache")
@@ -51,11 +52,16 @@ func init() {
 func main() {
 	Cache, _ = SetupCache()
 
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"https://danhammer.dev", "https://*.danhammer.dev"},
+	})
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/roll/{input}", roll)
 	router.HandleFunc("/image/{id}", image)
 	router.HandleFunc("/rollImage/{input}", rollImage)
-	log.Fatal(http.ListenAndServe(":3000", router))
+	handler := c.Handler(router)
+	log.Fatal(http.ListenAndServe(":3000", handler))
 }
 
 //4d20H3+3d4L1+12-3
@@ -67,7 +73,7 @@ func roll(w http.ResponseWriter, r *http.Request) {
 	result.Input = input
 
 	id, _ := shortid.Generate()
-	result.Image = "https://k8s.danhammer.dev/image/" + id
+	result.Image = "http://k8s.danhammer.dev/image/" + id
 
 	Cache.SaveResult(id, result)
 	json.NewEncoder(w).Encode(result)

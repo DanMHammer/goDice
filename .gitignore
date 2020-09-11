@@ -8,3 +8,4 @@
 # Testing
 *.test
 *.tmp
+app/dice
