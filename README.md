@@ -23,12 +23,16 @@ See it in Action: https://k8s.danhammer.dev/rollImage/-3d2H2%2B5d4H1%2B4d6H3%2B3
 ## Build and run
 
 ```
-docker run -p 6379:6379 redis -d
-go get
-go build .\
-go test -v
-go run .\
+docker run -p 6379:6379 -d redis
+docker build . -t godice
+docker run -p 3000:3000 -d godice
 ```
+
+Test it out! http://0.0.0.0:3000/rollImage/-3d2H2%2B5d4H1%2B4d6H3%2B3d8%2B2d10H1%2B3d12-2d20
+
+Example roll:
+
+![image](https://user-images.githubusercontent.com/35697323/135666980-4f081643-385a-4b20-af8f-6d30d1a05862.png)
 
 ## Usage
 
