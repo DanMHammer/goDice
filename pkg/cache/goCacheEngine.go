@@ -6,6 +6,7 @@ import (
 	"github.com/patrickmn/go-cache"
 
 	"github.com/danmhammer/goDice/pkg/dice"
+	"github.com/danmhammer/goDice/pkg/newdice"
 )
 
 // GoCacheEngine structure
@@ -41,4 +42,16 @@ func (gc *GoCacheEngine) GetResult(id string) dice.Result {
 		return result
 	}
 	return dice.Result{}
+}
+
+func (gc *GoCacheEngine) SaveRes(id string, res newdice.RollResponse) {
+	gc.Cache.Set(id, res, cache.DefaultExpiration)
+}
+
+func (gc *GoCacheEngine) GetRes(id string) newdice.RollResponse {
+	if x, found := gc.Cache.Get(id); found {
+		result := x.(newdice.RollResponse)
+		return result
+	}
+	return newdice.RollResponse{}
 }

@@ -1,0 +1,133 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/roll": {
+            "post": {
+                "description": "do ping",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roll"
+                ],
+                "summary": "roll dice based on json post",
+                "parameters": [
+                    {
+                        "description": "roll",
+                        "name": "roll",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/newdice.RollRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/newdice.RollResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "newdice.DieRequest": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "highest": {
+                    "type": "integer"
+                },
+                "lowest": {
+                    "type": "integer"
+                },
+                "size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "newdice.DieResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "highest": {
+                    "type": "integer"
+                },
+                "highest-kept": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "lowest": {
+                    "type": "integer"
+                },
+                "lowest-kept": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "rolls": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "subtotal": {
+                    "type": "integer"
+                },
+                "unkept": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "newdice.RollRequest": {
+            "type": "object",
+            "properties": {
+                "dice": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/newdice.DieRequest"
+                    }
+                }
+            }
+        },
+        "newdice.RollResponse": {
+            "type": "object",
+            "properties": {
+                "dice": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/newdice.DieResponse"
+                    }
+                },
+                "error": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

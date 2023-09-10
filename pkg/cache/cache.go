@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/danmhammer/goDice/pkg/dice"
+	newdice "github.com/danmhammer/goDice/pkg/newdice"
 )
 
 // CacheEngine interface
@@ -13,6 +14,8 @@ type CacheEngine interface {
 	SaveResult(id string, result dice.Result)
 	// Retrieves result from cache
 	GetResult(id string) (result dice.Result)
+	SaveRes(id string, res newdice.RollResponse)
+	GetRes(id string) (res newdice.RollResponse)
 }
 
 var ctx = context.Background()

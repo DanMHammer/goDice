@@ -24,16 +24,16 @@ type DieRequest struct {
 	Size    int `json:"size"`
 	Count   int `json:"count"`
 	Highest int `json:"highest"`
-	Lowest  int `json:"lowest"`
+	// Lowest  int `json:"lowest"`
 }
 
 type DieResponse struct {
 	DieRequest
 	Rolls       []int `json:"rolls"`
 	HighestKept []int `json:"highest-kept"`
-	LowestKept  []int `json:"lowest-kept"`
-	Unkept      []int `json:"unkept"`
-	Subtotal    int   `json:"subtotal"`
+	// LowestKept  []int `json:"lowest-kept"`
+	Unkept   []int `json:"unkept"`
+	Subtotal int   `json:"subtotal"`
 }
 
 type RollRequest struct {
@@ -41,7 +41,8 @@ type RollRequest struct {
 }
 
 type RollResponse struct {
-	Dice  []DieResponse `json:"dice"`
-	Total int           `json:"total"`
-	Error string        `json:"error"`
+	Dice     []DieResponse `json:"dice"`
+	Total    int           `json:"total"`
+	Error    string        `json:"error"`
+	ImageUrl string        `json:"image"`
 }

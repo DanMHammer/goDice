@@ -1,0 +1,85 @@
+definitions:
+  newdice.DieRequest:
+    properties:
+      count:
+        type: integer
+      highest:
+        type: integer
+      lowest:
+        type: integer
+      size:
+        type: integer
+    type: object
+  newdice.DieResponse:
+    properties:
+      count:
+        type: integer
+      highest:
+        type: integer
+      highest-kept:
+        items:
+          type: integer
+        type: array
+      lowest:
+        type: integer
+      lowest-kept:
+        items:
+          type: integer
+        type: array
+      rolls:
+        items:
+          type: integer
+        type: array
+      size:
+        type: integer
+      subtotal:
+        type: integer
+      unkept:
+        items:
+          type: integer
+        type: array
+    type: object
+  newdice.RollRequest:
+    properties:
+      dice:
+        items:
+          $ref: '#/definitions/newdice.DieRequest'
+        type: array
+    type: object
+  newdice.RollResponse:
+    properties:
+      dice:
+        items:
+          $ref: '#/definitions/newdice.DieResponse'
+        type: array
+      error:
+        type: string
+      total:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /roll:
+    post:
+      consumes:
+      - application/json
+      description: do ping
+      parameters:
+      - description: roll
+        in: body
+        name: roll
+        required: true
+        schema:
+          $ref: '#/definitions/newdice.RollRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/newdice.RollResponse'
+      summary: roll dice based on json post
+      tags:
+      - roll
+swagger: "2.0"

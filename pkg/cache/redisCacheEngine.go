@@ -7,6 +7,7 @@ import (
 	"github.com/go-redis/redis/v8"
 
 	"github.com/danmhammer/goDice/pkg/dice"
+	"github.com/danmhammer/goDice/pkg/newdice"
 )
 
 // RedisEngine structure
@@ -58,6 +59,31 @@ func (rdb *RedisEngine) GetResult(id string) dice.Result {
 	}
 
 	result := dice.Result{}
+
+	if err := json.Unmarshal([]byte(jsonResult), &result); err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (rdb *RedisEngine) SaveRes(id string, res newdice.RollResponse) {
+	jsonResult, _ := json.Marshal(res)
+
+	err := rdb.RedisClient.Set(ctx, id, jsonResult, 30*time.Minute).Err()
+	if err != nil {
+		return
+	}
+}
+
+func (rdb *RedisEngine) GetRes(id string) newdice.RollResponse {
+	jsonResult, err := rdb.RedisClient.Get(ctx, id).Result()
+	if err == redis.Nil {
+		return newdice.RollResponse{}
+	} else if err != nil {
+		panic(err)
+	}
+
+	result := newdice.RollResponse{}
 
 	if err := json.Unmarshal([]byte(jsonResult), &result); err != nil {
 		panic(err)
