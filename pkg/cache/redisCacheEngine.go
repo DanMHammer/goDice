@@ -7,7 +7,6 @@ import (
 	"github.com/go-redis/redis/v8"
 
 	"github.com/danmhammer/goDice/pkg/dice"
-	"github.com/danmhammer/goDice/pkg/newdice"
 )
 
 // RedisEngine structure
@@ -37,36 +36,7 @@ func NewRedisEngine() (output *RedisEngine, err error) {
 	return &engine, nil
 }
 
-// SaveResult - Save Result to Redis
-func (rdb *RedisEngine) SaveResult(id string, result dice.Result) {
-
-	jsonResult, _ := json.Marshal(result)
-
-	err := rdb.RedisClient.Set(ctx, id, jsonResult, 30*time.Minute).Err()
-	if err != nil {
-		return
-	}
-
-}
-
-// GetResult - Get Result from Redis
-func (rdb *RedisEngine) GetResult(id string) dice.Result {
-	jsonResult, err := rdb.RedisClient.Get(ctx, id).Result()
-	if err == redis.Nil {
-		return dice.Result{}
-	} else if err != nil {
-		panic(err)
-	}
-
-	result := dice.Result{}
-
-	if err := json.Unmarshal([]byte(jsonResult), &result); err != nil {
-		panic(err)
-	}
-	return result
-}
-
-func (rdb *RedisEngine) SaveRes(id string, res newdice.RollResponse) {
+func (rdb *RedisEngine) SaveRes(id string, res dice.RollResponse) {
 	jsonResult, _ := json.Marshal(res)
 
 	err := rdb.RedisClient.Set(ctx, id, jsonResult, 30*time.Minute).Err()
@@ -75,15 +45,15 @@ func (rdb *RedisEngine) SaveRes(id string, res newdice.RollResponse) {
 	}
 }
 
-func (rdb *RedisEngine) GetRes(id string) newdice.RollResponse {
+func (rdb *RedisEngine) GetRes(id string) dice.RollResponse {
+	result := dice.RollResponse{}
+
 	jsonResult, err := rdb.RedisClient.Get(ctx, id).Result()
 	if err == redis.Nil {
-		return newdice.RollResponse{}
+		return result
 	} else if err != nil {
 		panic(err)
 	}
-
-	result := newdice.RollResponse{}
 
 	if err := json.Unmarshal([]byte(jsonResult), &result); err != nil {
 		panic(err)

@@ -8,7 +8,7 @@ import (
 	svg "github.com/ajstarks/svgo"
 )
 
-func maxLength(dice []Group) int {
+func maxLength(dice []DieResponse) int {
 	max := 0
 
 	for _, die := range dice {
@@ -20,56 +20,46 @@ func maxLength(dice []Group) int {
 	return max
 }
 
-func Generate(w http.ResponseWriter, result Result) {
+func Render(w http.ResponseWriter, res RollResponse) {
 	w.Header().Set("Content-Type", "image/svg+xml")
 	s := svg.New(w)
 
-	canvasx := maxLength(result.Dice)*75 + 100
-	canvasy := len(result.Dice)*100 + len(result.Modifiers)*100 + 50
+	canvasx := maxLength(res.Dice)*75 + 100
+	// canvasy := len(result.Dice)*100 + len(result.Modifiers)*100 + 50
+	canvasy := len(res.Dice)*100 + 50
 
 	s.Start(canvasx, canvasy)
 	x := 60
 	y := 50
 
-	s.Text(25, 30, result.Input, "font-size:25px;fill:black;font-weight:bold")
+	// s.Text(25, 30, result.Input, "font-size:25px;fill:black;font-weight:bold")
 
-	for i := 0; i < len(result.Dice); i++ {
+	for i := 0; i < len(res.Dice); i++ {
 		x = 60
-		size := result.Dice[i].Size
+		size := res.Dice[i].Size
 
 		text(3, y+35, s, fmt.Sprintf("d%d", size))
 		x += 35
-		text(55, y+35, s, result.Dice[i].Operation)
+		// text(55, y+35, s, res.Dice[i].Operation)
 
-		s.Roundrect(x-10, y-10, 60*len(result.Dice[i].Kept)+5, 70, 10, 10, "fill:none;stroke:black;stroke-width:5")
+		s.Roundrect(x-10, y-10, 60*len(res.Dice[i].HighestKept)+5, 70, 10, 10, "fill:none;stroke:black;stroke-width:5")
 
-		for j := 0; j < len(result.Dice[i].Kept); j++ {
-			die(x, y, s, size, result.Dice[i].Kept[j])
+		for j := 0; j < len(res.Dice[i].HighestKept); j++ {
+			die(x, y, s, size, res.Dice[i].HighestKept[j])
 			x += 60
 		}
 
-		for k := 0; k < len(result.Dice[i].Unkept); k++ {
-			die(x, y, s, size, result.Dice[i].Unkept[k])
+		for k := 0; k < len(res.Dice[i].Unkept); k++ {
+			die(x, y, s, size, res.Dice[i].Unkept[k])
 			x += 60
 		}
 
 		text(x+10, y+35, s, "=")
-		text(x+35, y+35, s, strconv.Itoa(result.Dice[i].Subtotal))
+		text(x+35, y+35, s, strconv.Itoa(res.Dice[i].Subtotal))
 		y += 80
 	}
 
-	if len(result.Modifiers) > 0 {
-		text(3, y+35, s, "Modifiers:")
-	}
-
-	x = 150
-
-	for i := 0; i < len(result.Modifiers); i++ {
-		text(x, y+35, s, fmt.Sprintf("%d", result.Modifiers[i]))
-		x += 60
-	}
-
-	text(3, y+80, s, fmt.Sprintf("Total: %d", result.Total))
+	text(3, y+80, s, fmt.Sprintf("Total: %d", res.Total))
 	s.End()
 }
 
@@ -87,24 +77,36 @@ func text(x int, y int, s *svg.SVG, text string) {
 }
 
 func die(x int, y int, s *svg.SVG, size int, value int) {
-	switch size {
-	case 2:
+	if size < 4 {
 		d2(s, value, x, y)
-	case 4:
-		d4(s, value, x, y)
-	case 6:
-		d6(s, value, x, y)
-	case 8:
-		d8(s, value, x, y)
-	case 10:
-		d10(s, value, x, y)
-	case 12:
-		d12(s, value, x, y)
-	case 20:
-		d20(s, value, x, y)
-	case 100:
-		s.Text(x+20, y+35, strconv.Itoa(value), "font-size:20pt;fill:black")
+		return
 	}
+	if size < 6 {
+		d4(s, value, x, y)
+		return
+	}
+	if size < 8 {
+		d6(s, value, x, y)
+		return
+	}
+	if size < 10 {
+		d8(s, value, x, y)
+		return
+	}
+	if size < 12 {
+		d10(s, value, x, y)
+		return
+	}
+	if size < 20 {
+		d12(s, value, x, y)
+		return
+	}
+	if size == 20 {
+		d20(s, value, x, y)
+		return
+	}
+
+	s.Text(x+20, y+35, strconv.Itoa(value), "font-size:20pt;fill:black")
 }
 
 func d2(s *svg.SVG, value, x int, y int) {

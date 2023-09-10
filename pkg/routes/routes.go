@@ -26,6 +26,5 @@ func AddRoutes(r *gin.Engine, c cache.CacheEngine) {
 	r.GET("/roll/:input", roll(c))
 	r.POST("/roll", rollJson(c))
 	r.GET("/image/:id", image(c))
-	r.GET("/image-new/:id", imageNew(c))
-	r.GET("/rollImage/:input", rollImage())
+	// r.GET("/rollImage/:input", rollImage())
 }

@@ -1,4 +1,4 @@
-package newdice
+package dice
 
 import (
 	"math/rand"

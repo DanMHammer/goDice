@@ -3,20 +3,19 @@ package cache
 import (
 	"time"
 
-	"github.com/patrickmn/go-cache"
+	gocache "github.com/patrickmn/go-cache"
 
 	"github.com/danmhammer/goDice/pkg/dice"
-	"github.com/danmhammer/goDice/pkg/newdice"
 )
 
 // GoCacheEngine structure
 type GoCacheEngine struct {
-	Cache *cache.Cache
+	Cache *gocache.Cache
 }
 
 // Connect - Create Go Cache
 func (gc *GoCacheEngine) Connect() (err error) {
-	gc.Cache = cache.New(5*time.Minute, 10*time.Minute)
+	gc.Cache = gocache.New(5*time.Minute, 10*time.Minute)
 	return
 }
 
@@ -30,28 +29,14 @@ func NewGoCacheEngine() (output *GoCacheEngine, err error) {
 	return &engine, nil
 }
 
-// SaveResult - Save Result to Cache
-func (gc *GoCacheEngine) SaveResult(id string, result dice.Result) {
-	gc.Cache.Set(id, result, cache.DefaultExpiration)
+func (gc *GoCacheEngine) SaveRes(id string, res dice.RollResponse) {
+	gc.Cache.Set(id, res, gocache.DefaultExpiration)
 }
 
-// GetResult - Get Result from Cache
-func (gc *GoCacheEngine) GetResult(id string) dice.Result {
+func (gc *GoCacheEngine) GetRes(id string) dice.RollResponse {
 	if x, found := gc.Cache.Get(id); found {
-		result := x.(dice.Result)
+		result := x.(dice.RollResponse)
 		return result
 	}
-	return dice.Result{}
-}
-
-func (gc *GoCacheEngine) SaveRes(id string, res newdice.RollResponse) {
-	gc.Cache.Set(id, res, cache.DefaultExpiration)
-}
-
-func (gc *GoCacheEngine) GetRes(id string) newdice.RollResponse {
-	if x, found := gc.Cache.Get(id); found {
-		result := x.(newdice.RollResponse)
-		return result
-	}
-	return newdice.RollResponse{}
+	return dice.RollResponse{}
 }
