@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/teris-io/shortid"
 
@@ -17,7 +19,8 @@ func Roll(cache cache.CacheEngine) func(c *gin.Context) {
 		result.Input = input
 
 		id, _ := shortid.Generate()
-		result.Image = "https://k8s.danhammer.dev/image/" + id
+		baseUrl := os.Getenv("HEROKU_APP_DEFAULT_DOMAIN_NAME")
+		result.Image = baseUrl + id
 
 		cache.SaveResult(id, result)
 		c.JSON(200, result)
