@@ -1,28 +1,20 @@
 definitions:
-  newdice.DieRequest:
+  dice.DieRequest:
     properties:
       count:
         type: integer
       highest:
         type: integer
-      lowest:
-        type: integer
       size:
         type: integer
     type: object
-  newdice.DieResponse:
+  dice.DieResponse:
     properties:
       count:
         type: integer
       highest:
         type: integer
       highest-kept:
-        items:
-          type: integer
-        type: array
-      lowest:
-        type: integer
-      lowest-kept:
         items:
           type: integer
         type: array
@@ -35,24 +27,25 @@ definitions:
       subtotal:
         type: integer
       unkept:
+        description: LowestKept  []int `json:"lowest-kept"`
         items:
           type: integer
         type: array
     type: object
-  newdice.RollRequest:
+  dice.RollRequest:
     properties:
       dice:
         items:
-          $ref: '#/definitions/newdice.DieRequest'
+          $ref: '#/definitions/dice.DieRequest'
         type: array
     type: object
-  newdice.RollResponse:
+  dice.RollResponse:
     properties:
       dice:
         items:
-          $ref: '#/definitions/newdice.DieResponse'
+          $ref: '#/definitions/dice.DieResponse'
         type: array
-      error:
+      image:
         type: string
       total:
         type: integer
@@ -64,22 +57,51 @@ paths:
     post:
       consumes:
       - application/json
-      description: do ping
       parameters:
       - description: roll
         in: body
         name: roll
         required: true
         schema:
-          $ref: '#/definitions/newdice.RollRequest'
+          $ref: '#/definitions/dice.RollRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/newdice.RollResponse'
+            $ref: '#/definitions/dice.RollResponse'
       summary: roll dice based on json post
+      tags:
+      - roll
+  /roll/{input}:
+    get:
+      parameters:
+      - description: input
+        in: path
+        name: input
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dice.RollResponse'
+      summary: roll dice based on string input
+      tags:
+      - roll
+  /rollImage/{input}:
+    get:
+      parameters:
+      - description: input
+        in: path
+        name: input
+        required: true
+        type: string
+      responses: {}
+      summary: roll dice based on string input and return image
       tags:
       - roll
 swagger: "2.0"

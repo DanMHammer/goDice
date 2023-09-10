@@ -43,6 +43,5 @@ type RollRequest struct {
 type RollResponse struct {
 	Dice     []DieResponse `json:"dice"`
 	Total    int           `json:"total"`
-	Error    string        `json:"error"`
 	ImageUrl string        `json:"image"`
 }

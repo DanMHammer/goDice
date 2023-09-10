@@ -17,7 +17,6 @@ const docTemplate = `{
     "paths": {
         "/roll": {
             "post": {
-                "description": "do ping",
                 "consumes": [
                     "application/json"
                 ],
@@ -35,7 +34,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/newdice.RollRequest"
+                            "$ref": "#/definitions/dice.RollRequest"
                         }
                     }
                 ],
@@ -43,15 +42,61 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/newdice.RollResponse"
+                            "$ref": "#/definitions/dice.RollResponse"
                         }
                     }
                 }
             }
+        },
+        "/roll/{input}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roll"
+                ],
+                "summary": "roll dice based on string input",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "input",
+                        "name": "input",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dice.RollResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/rollImage/{input}": {
+            "get": {
+                "tags": [
+                    "roll"
+                ],
+                "summary": "roll dice based on string input and return image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "input",
+                        "name": "input",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
         }
     },
     "definitions": {
-        "newdice.DieRequest": {
+        "dice.DieRequest": {
             "type": "object",
             "properties": {
                 "count": {
@@ -60,15 +105,12 @@ const docTemplate = `{
                 "highest": {
                     "type": "integer"
                 },
-                "lowest": {
-                    "type": "integer"
-                },
                 "size": {
                     "type": "integer"
                 }
             }
         },
-        "newdice.DieResponse": {
+        "dice.DieResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -78,15 +120,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "highest-kept": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "lowest": {
-                    "type": "integer"
-                },
-                "lowest-kept": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -105,6 +138,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "unkept": {
+                    "description": "LowestKept  []int ` + "`" + `json:\"lowest-kept\"` + "`" + `",
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -112,27 +146,27 @@ const docTemplate = `{
                 }
             }
         },
-        "newdice.RollRequest": {
+        "dice.RollRequest": {
             "type": "object",
             "properties": {
                 "dice": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/newdice.DieRequest"
+                        "$ref": "#/definitions/dice.DieRequest"
                     }
                 }
             }
         },
-        "newdice.RollResponse": {
+        "dice.RollResponse": {
             "type": "object",
             "properties": {
                 "dice": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/newdice.DieResponse"
+                        "$ref": "#/definitions/dice.DieResponse"
                     }
                 },
-                "error": {
+                "image": {
                     "type": "string"
                 },
                 "total": {

@@ -25,14 +25,11 @@ func Render(w http.ResponseWriter, res RollResponse) {
 	s := svg.New(w)
 
 	canvasx := maxLength(res.Dice)*75 + 100
-	// canvasy := len(result.Dice)*100 + len(result.Modifiers)*100 + 50
 	canvasy := len(res.Dice)*100 + 50
 
 	s.Start(canvasx, canvasy)
 	x := 60
 	y := 50
-
-	// s.Text(25, 30, result.Input, "font-size:25px;fill:black;font-weight:bold")
 
 	for i := 0; i < len(res.Dice); i++ {
 		x = 60
@@ -40,7 +37,6 @@ func Render(w http.ResponseWriter, res RollResponse) {
 
 		text(3, y+35, s, fmt.Sprintf("d%d", size))
 		x += 35
-		// text(55, y+35, s, res.Dice[i].Operation)
 
 		s.Roundrect(x-10, y-10, 60*len(res.Dice[i].HighestKept)+5, 70, 10, 10, "fill:none;stroke:black;stroke-width:5")
 
