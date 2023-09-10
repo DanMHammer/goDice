@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"math/rand"
-	"net/http"
 	"os"
 	"time"
 
@@ -16,15 +15,15 @@ import (
 
 var cacheEngineFlag = flag.String("engine", "gocache", "Storage engine to use for hashes and messages.  Supported: redis, gocache. Default: gocache")
 
-// Cache - Cache Engine for saving results
-var Cache cache.CacheEngine
-
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
 func main() {
-	Cache, _ = cache.SetupCache(*cacheEngineFlag)
+	c, err := cache.SetupCache(*cacheEngineFlag)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	port := os.Getenv("PORT")
 
@@ -34,19 +33,7 @@ func main() {
 
 	r := gin.Default()
 
-	addRoutes(r)
+	routes.AddRoutes(r, c)
 
 	r.Run(":" + port)
-}
-
-func addRoutes(r *gin.Engine) {
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-
-	r.GET("/roll/:input", routes.Roll(Cache))
-	r.GET("/image/:id", routes.Image(Cache))
-	r.GET("/rollImage/:input", routes.RollImage())
 }

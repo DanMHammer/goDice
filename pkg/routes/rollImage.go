@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RollImage() func(c *gin.Context) {
+func rollImage() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		input := c.Param("input")
 		result := dice.PerformCommands(input)

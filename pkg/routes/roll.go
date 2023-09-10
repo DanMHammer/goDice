@@ -11,7 +11,7 @@ import (
 )
 
 // 4d20H3+3d4L1+12-3
-func Roll(cache cache.CacheEngine) func(c *gin.Context) {
+func roll(cache cache.CacheEngine) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		input := c.Param("input")
 		result := dice.PerformCommands(input)

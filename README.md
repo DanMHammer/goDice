@@ -17,15 +17,14 @@ See it in Action: https://k8s.danhammer.dev/rollImage/-3d2H2%2B5d4H1%2B4d6H3%2B3
 ## Todo
 
 - Github Actions test
-- Frontend on danhammer.dev
-- Add redis option to helm deployment
+- Automatic deployment to heroku
+- Add redis to heroku
 
 ## Build and run
 
 ```
-docker run -p 6379:6379 -d redis
-docker build . -t godice
-docker run -p 3000:3000 -d godice
+go build -o app
+PORT=5000 ./app
 ```
 
 Test it out! http://0.0.0.0:3000/rollImage/-3d2H2%2B5d4H1%2B4d6H3%2B3d8%2B2d10H1%2B3d12-2d20

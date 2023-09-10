@@ -1,6 +1,6 @@
-package dice 
+package dice
 
-//Result ...
+// Result ...
 type Result struct {
 	Input         string  `json:"input"`
 	Valid         bool    `json:"valid"`
@@ -13,7 +13,7 @@ type Result struct {
 	Errors        string  `json:"error"`
 }
 
-//Group ...
+// Group ...
 type Group struct {
 	Size       int    `json:"size"`
 	Count      int    `json:"count"`
